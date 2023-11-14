@@ -23,11 +23,19 @@ from sklearn.multiclass import OneVsRestClassifier
 
 st.title('Organic Matter Abundance Predictor (OMAP)')
 DATA_URL = ('https://raw.githubusercontent.com/FloydNichols97/OMAP/main/ML_Data.csv')
-Map_Data = ('https://raw.githubusercontent.com/FloydNichols97/OMAP/main/Spatial_df.csv')
+Map_Data = ('https://raw.githubusercontent.com/FloydNichols97/OMAP/main/Spatial_df2.csv')
 
-tab1, tab2 = st.tabs(["Model Data & Performance", "Make Prediction"])
+tab1, tab2, tab3, tab4 = st.tabs(["Information", "Model Data & Performance", "Make Prediction", "Geographic Distribution"])
 
 with tab1:
+    st.subheader('Synopsis')
+    st.markdown('''This page allows on-demand calculation of the estimated modern mean annual and monthly deuterium and oxygen isotope composition of precipitation at a specified location. 95% confidence intervals for the estimated annual values can also be obtained. It is intended as a tool to facilitate the use of stable isotope data in hydrological, ecological, forensic, and geological studies, and to help standardize the interpolation of precipitation stable isotope data. Estimates are calculated from a global data set according to an algorithm developed by Bowen & Wilkinson (2002) and refined by Bowen & Revenaugh (2003) and Bowen et al. (2005). These papers are the primary references for the OIPC, provide description of the methods, and should be cited in any publication or report that uses isotopic estimates generated using this site. More background on this project can be found here. The data used by the OIPC are derived primarily from the International Atomic Energy Association/World Meteorological Organization Global Network for Isotopes in Precipitation, and their work should also be recognized.''')
+    st.subheader('Instructions')
+    st.markdown('''The OIPC consists of a simple HTML form that allows user entry of site location and elevation parameters and returns estimated δ2H and δ18O values for the specified location. Enter the latitude and longitude in decimal degrees, with East and North positive and West and South negative. Altitude should be entered in meters above sea level. Please note that the OIPC provides limited checks on the accuracy of your site locations...any inaccuracies in the latitude/longitude/altitude values you enter on the form will affect the isotopic estimates returned. If you would like to obtain quantitative estimates of the 95% confidence intervals for interpolated mean annual values, check the appropriate box...however, generating the confidence intervals increases the required computational time by an order of magnitude, so be prepared to wait!''')
+    st.subheader('Contact')
+    st.write('floydnichols2025@u.northwestern.edu')
+
+with tab2:
     @st.cache_data
     def load_data(nrows):
         data = pd.read_csv(DATA_URL, nrows=nrows)
@@ -144,9 +152,10 @@ with tab1:
     #st.write('Accuracy: %.3f (%.3f)' % ((mean(RF_scores), std(RF_scores))))
     st.text(classification_report(y_test, RF_predictions))
 
-with tab2:
+with tab3:
     st.subheader("Upload a Data File for Organic Matter Prediction")
     uploaded_file = st.file_uploader("Choose a file")
+
     def load_data(nrows):
         new_data = pd.read_csv(uploaded_file, nrows=nrows)
         return new_data
@@ -201,3 +210,6 @@ with tab2:
 
     st.subheader("Model Predictions and Probabilities")
     st.write(probabilities_RF)
+
+#with tab4:
+#    st.map(Map_Data, latitude = "Latitude", longitude = "Longitude")
