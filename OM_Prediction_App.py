@@ -221,5 +221,9 @@ with tab3:
 
 
 
-#with tab4:
-#    st.map(Map_Data, latitude = "Latitude", longitude = "Longitude")
+with tab4:
+    Map_Data_df = {'lat': [50.6, 50.59, 50.58, 51.07, 51.32],
+                   'lon': [-121.35, -121.34, -121.34, -121.58, -121.63]}
+    Map_Data_df = pd.DataFrame(data= Map_Data_df)
+    st.markdown('''This tab displays the current geographic distribution of lakes represented in the model. This model was originally developed using Mars-analog hypersaline lakes in British Columbia; however, the authors encourage more data from other hypersaline systems to represent a greater diversity of regions and improve the model. Please see the contact on the 'Information' tab if you are interested in contributing data to the model. ''')
+    st.map(Map_Data_df, latitude = "lat", longitude = "lon", color = '#0000FF', size = 1000)
