@@ -103,7 +103,7 @@ with tab2:
 
     tsne_result_df = pd.DataFrame({'tsne_1': tsne_result[:,0], 'tsne_2': tsne_result[:,1], 'label': y})
     fig = px.scatter(tsne_result_df, x='tsne_1', y='tsne_2', color = 'label',  color_discrete_map=palette)
-    fig.update_traces(marker=dict(size=12, line=dict(width=2, color='DarkSlateGrey')))
+    fig.update_traces(marker=dict(size=12, line=dict(width=2, color='Black')))
     ax.set_xlabel('t-SNE 1')
     ax.set_ylabel('t-SNE 2')
     ax.set_aspect('equal')
@@ -123,7 +123,7 @@ with tab2:
     st.subheader('Principal Component Analysis')
     PCA_df = pd.DataFrame({'PCA_1': Xt[:, 0], 'PCA_2': Xt[:, 1], 'label': y})
     fig = px.scatter(PCA_df, x='PCA_1', y='PCA_2', color = 'label',  color_discrete_map=palette)
-    fig.update_traces(marker=dict(size=12, line=dict(width=2, color='DarkSlateGrey')))
+    fig.update_traces(marker=dict(size=12, line=dict(width=2, color='Black')))
     ax.set_xlabel('PC 1')
     ax.set_ylabel('PC 2')
     ax.set_aspect('equal')
