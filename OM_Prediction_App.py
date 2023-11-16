@@ -103,7 +103,7 @@ with tab2:
 
     tsne_result_df = pd.DataFrame({'tsne_1': tsne_result[:,0], 'tsne_2': tsne_result[:,1], 'label': y})
     fig = px.scatter(tsne_result_df, x='tsne_1', y='tsne_2', color = 'label',  color_discrete_map=palette)
-    fig.update_traces(marker=dict(size=12, line=dict(width=2, color='Black')))
+    fig.update_traces(marker=dict(size=12, line=dict(width=2, color='DarkSlateGrey')))
     ax.set_xlabel('t-SNE 1')
     ax.set_ylabel('t-SNE 2')
     ax.set_aspect('equal')
@@ -123,7 +123,7 @@ with tab2:
     st.subheader('Principal Component Analysis')
     PCA_df = pd.DataFrame({'PCA_1': Xt[:, 0], 'PCA_2': Xt[:, 1], 'label': y})
     fig = px.scatter(PCA_df, x='PCA_1', y='PCA_2', color = 'label',  color_discrete_map=palette)
-    fig.update_traces(marker=dict(size=12, line=dict(width=2, color='Black')))
+    fig.update_traces(marker=dict(size=12, line=dict(width=2, color='DarkSlateGrey')))
     ax.set_xlabel('PC 1')
     ax.set_ylabel('PC 2')
     ax.set_aspect('equal')
@@ -174,49 +174,52 @@ with tab3:
         new_data = load_data(10000)
         data_load_state.text("Done!")
 
-    if st.checkbox('Show New Data'):
-        st.subheader('New Data')
-        st.write(new_data)
+        if st.checkbox('Show New Data'):
+            st.subheader('New Data')
+            st.write(new_data)
 
-    # create a list of our conditions
-    conditions = [
-        (new_data['TOC'] <= 2.5),
-        (new_data['TOC'] > 2.5) & (new_data['TOC'] <= 10),
-        (new_data['TOC'] > 10)
+        # create a list of our conditions
+        conditions = [
+            (new_data['TOC'] <= 2.5),
+            (new_data['TOC'] > 2.5) & (new_data['TOC'] <= 10),
+            (new_data['TOC'] > 10)
         ]
 
-    # create a list of the values we want to assign for each condition
-    values = ['Low', 'Moderate', 'High']
+        # create a list of the values we want to assign for each condition
+        values = ['Low', 'Moderate', 'High']
 
-    # create a new column and use np.select to assign values to it using our lists as arguments
-    new_data['Productivity'] = np.select(conditions, values)
+        # create a new column and use np.select to assign values to it using our lists as arguments
+        new_data['Productivity'] = np.select(conditions, values)
 
-    new_data = new_data.drop(columns=['Sample', 'S% by weight'])
-    new_data = new_data.replace([np.inf, -np.inf], np.nan).dropna(axis=0)
-    new_data = new_data.dropna()
+        new_data = new_data.drop(columns=['Sample', 'S% by weight'])
+        new_data = new_data.replace([np.inf, -np.inf], np.nan).dropna(axis=0)
+        new_data = new_data.dropna()
 
-    X_new_data = new_data.drop(columns=['Productivity'])
-    y = new_data['Productivity']
+        X_new_data = new_data.drop(columns=['Productivity'])
+        y = new_data['Productivity']
 
-    # RF
-    RF = OneVsRestClassifier(RandomForestClassifier(n_estimators=100, min_samples_split = 5, bootstrap=True, random_state = 1))
-    RF.fit(X_train, y_train)
-    RF.predict_proba(X_test)
-    predict_RF = RF_model.predict(X_new_data)
-    probabilities_RF = RF.predict_proba(X_new_data)
-    probabilities_RF = pd.DataFrame(probabilities_RF)
-    probabilities_RF = probabilities_RF.rename({0: 'High',
-                                                1: 'Low',
-                                                2: 'Moderate'}, axis = 1)
+        # RF
+        RF = OneVsRestClassifier(
+            RandomForestClassifier(n_estimators=100, min_samples_split=5, bootstrap=True, random_state=1))
+        RF.fit(X_train, y_train)
+        RF.predict_proba(X_test)
+        predict_RF = RF_model.predict(X_new_data)
+        probabilities_RF = RF.predict_proba(X_new_data)
+        probabilities_RF = pd.DataFrame(probabilities_RF)
+        probabilities_RF = probabilities_RF.rename({0: 'High',
+                                                    1: 'Low',
+                                                    2: 'Moderate'}, axis=1)
 
-    fig, ax = plt.subplots(1, figsize=(4,4))
-    probabilities_RF.plot(kind='area', stacked=True, color=['#FFC107', '#D81B60', '#1E88E5'],  title = "Random Forest")
-    plt.xlabel('Sample')
-    plt.ylabel('Probability')
-    #st.pyplot(fig)
+        fig, ax = plt.subplots(1, figsize=(4, 4))
+        probabilities_RF.plot(kind='area', stacked=True, color=['#FFC107', '#D81B60', '#1E88E5'], title="Random Forest")
+        plt.xlabel('Sample')
+        plt.ylabel('Probability')
+        # st.pyplot(fig)
 
-    st.subheader("Model Predictions and Probabilities")
-    st.write(probabilities_RF)
+        st.subheader("Model Predictions and Probabilities")
+        st.write(probabilities_RF)
+
+
 
 #with tab4:
 #    st.map(Map_Data, latitude = "Latitude", longitude = "Longitude")
