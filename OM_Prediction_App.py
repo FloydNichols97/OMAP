@@ -22,7 +22,8 @@ import plotly.express as px
 from sklearn.multiclass import OneVsRestClassifier
 
 st.title('Organic Matter Abundance Predictor (OMAP)')
-DATA_URL = ('https://raw.githubusercontent.com/FloydNichols97/OMAP/main/ML_Data.csv')
+#DATA_URL = ('https://raw.githubusercontent.com/FloydNichols97/OMAP/main/ML_Data.csv')
+DATA_URL = ('https://raw.githubusercontent.com/FloydNichols97/OMAP/main/ML_Data_2.csv')
 Map_Data = ('https://raw.githubusercontent.com/FloydNichols97/OMAP/main/Spatial_df2.csv')
 
 tab1, tab2, tab3, tab4 = st.tabs(["Information", "Model Data & Performance", "Make Prediction", "Geographic Distribution"])
@@ -52,9 +53,18 @@ with tab2:
         st.subheader('Model Data')
         st.write(data)
 
-    data = data.drop(columns=['Sample', 'S% by weight'])
+    data = data.drop(columns=['Sample'])
     data = data.replace([np.inf, -np.inf], np.nan).dropna(axis=0)
     data = data.dropna()
+    elements = st.multiselect("Select elements (default is all):", data.columns, default = ['Mg', 'Ti', 'V', 'Cr', 'Mn', 'Fe', 'Co', 'Ni', 'Cu', 'Zn', 'As', 'Se',
+                    'Rb', 'Sr', 'Y', 'Zr', 'Nb', 'Mo', 'Ag', 'Cd', 'Sn', 'Sb', 'W', 'Hg',
+                    'Pb', 'Bi', 'Th', 'U', 'LE', 'Al', 'Si', 'P', 'S', 'K', 'Ca'])
+
+    #all_elements = st.checkbox("Select All Elements")
+    #if all_elements:
+    #    elements = ['Mg', 'Ti', 'V', 'Cr', 'Mn', 'Fe', 'Co', 'Ni', 'Cu', 'Zn', 'As', 'Se',
+    #                'Rb', 'Sr', 'Y', 'Zr', 'Nb', 'Mo', 'Ag', 'Cd', 'Sn', 'Sb', 'W', 'Hg',
+    #                'Pb', 'Bi', 'Th', 'U', 'LE', 'Al', 'Si', 'P', 'S', 'K', 'Ca']
 
     st.header('Total Organic Carbon Distribution')
     fig, ax = plt.subplots()
@@ -84,7 +94,8 @@ with tab2:
     data['Productivity'] = np.select(conditions, values)
 
     # t-SNE
-    X = data.drop(columns=['Productivity'])
+    X = data[elements] # Make prediction based on selected elements
+    #X = data.drop(columns=['Productivity'])
     y = data['Productivity']
     oversample = SMOTE()
     X, y = oversample.fit_resample(X, y)
@@ -111,7 +122,8 @@ with tab2:
     st.plotly_chart(fig, use_container_width=True)
 
     # PCA
-    X = data.drop(columns=['Productivity'])
+    X = data[elements] # Make prediction based on selected elements
+    #X = data.drop(columns=['Productivity'])
     y = data['Productivity']
     oversample = SMOTE()
     X, y = oversample.fit_resample(X, y)
@@ -130,9 +142,9 @@ with tab2:
     ax.legend(bbox_to_anchor=(0.8, 0.95), loc=2, borderaxespad=0.0)
     st.plotly_chart(fig, use_container_width=True)
 
-
     # Model Classifier
     st.header('Model Performance')
+    data = data.drop(columns=['TOC'])
     np.random.seed(300)
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.25)
     # Random Forest Classifier
@@ -191,11 +203,12 @@ with tab3:
         # create a new column and use np.select to assign values to it using our lists as arguments
         new_data['Productivity'] = np.select(conditions, values)
 
-        new_data = new_data.drop(columns=['Sample', 'S% by weight'])
+        new_data = new_data.drop(columns=['Sample'])
         new_data = new_data.replace([np.inf, -np.inf], np.nan).dropna(axis=0)
         new_data = new_data.dropna()
 
-        X_new_data = new_data.drop(columns=['Productivity'])
+        X_new_data = new_data[elements] # Make prediction based on selected elements
+        #X_new_data = new_data.drop(columns=['Productivity'])
         y = new_data['Productivity']
 
         # RF
@@ -220,10 +233,9 @@ with tab3:
         st.write(probabilities_RF)
 
 
-
 with tab4:
-    Map_Data_df = {'lat': [50.6, 50.59, 50.58, 51.07, 51.32],
-                   'lon': [-121.35, -121.34, -121.34, -121.58, -121.63]}
+    Map_Data_df = {'lat': [50.6, 50.59, 50.58, 51.07, 51.32, 71.71],
+                   'lon': [-121.35, -121.34, -121.34, -121.58, -121.63, -42.60]}
     Map_Data_df = pd.DataFrame(data= Map_Data_df)
     st.markdown('''This tab displays the current geographic distribution of lakes represented in the model. This model was originally developed using Mars-analog hypersaline lakes in British Columbia; however, the authors encourage more data from other hypersaline systems to represent a greater diversity of regions and improve the model. Please see the contact on the 'Information' tab if you are interested in contributing data to the model. ''')
     st.map(Map_Data_df, latitude = "lat", longitude = "lon", color = '#0000FF', size = 1000)
