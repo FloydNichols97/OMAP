@@ -191,17 +191,17 @@ with tab3:
             st.write(new_data)
 
         # create a list of our conditions
-        conditions = [
-            (new_data['TOC'] <= 2.5),
-            (new_data['TOC'] > 2.5) & (new_data['TOC'] <= 10),
-            (new_data['TOC'] > 10)
-        ]
+        #conditions = [
+        #    (new_data['TOC'] <= 2.5),
+        #    (new_data['TOC'] > 2.5) & (new_data['TOC'] <= 10),
+        #    (new_data['TOC'] > 10)
+        #]
 
         # create a list of the values we want to assign for each condition
-        values = ['Low', 'Moderate', 'High']
+        #values = ['Low', 'Moderate', 'High']
 
         # create a new column and use np.select to assign values to it using our lists as arguments
-        new_data['Productivity'] = np.select(conditions, values)
+        #new_data['Productivity'] = np.select(conditions, values)
 
         new_data = new_data.drop(columns=['Sample'])
         new_data = new_data.replace([np.inf, -np.inf], np.nan).dropna(axis=0)
@@ -209,7 +209,7 @@ with tab3:
 
         X_new_data = new_data[elements] # Make prediction based on selected elements
         #X_new_data = new_data.drop(columns=['Productivity'])
-        y = new_data['Productivity']
+        #y = new_data['Productivity']
 
         # RF
         RF = OneVsRestClassifier(
