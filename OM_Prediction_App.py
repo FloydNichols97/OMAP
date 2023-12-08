@@ -60,12 +60,6 @@ with tab2:
                     'Rb', 'Sr', 'Y', 'Zr', 'Nb', 'Mo', 'Ag', 'Cd', 'Sn', 'Sb', 'W', 'Hg',
                     'Pb', 'Bi', 'Th', 'U', 'LE', 'Al', 'Si', 'P', 'S', 'K', 'Ca'])
 
-    #all_elements = st.checkbox("Select All Elements")
-    #if all_elements:
-    #    elements = ['Mg', 'Ti', 'V', 'Cr', 'Mn', 'Fe', 'Co', 'Ni', 'Cu', 'Zn', 'As', 'Se',
-    #                'Rb', 'Sr', 'Y', 'Zr', 'Nb', 'Mo', 'Ag', 'Cd', 'Sn', 'Sb', 'W', 'Hg',
-    #                'Pb', 'Bi', 'Th', 'U', 'LE', 'Al', 'Si', 'P', 'S', 'K', 'Ca']
-
     st.header('Total Organic Carbon Distribution')
     fig, ax = plt.subplots()
     sns.histplot(data.TOC, kde=True, edgecolor='k', color='grey')
@@ -190,26 +184,11 @@ with tab3:
             st.subheader('New Data')
             st.write(new_data)
 
-        # create a list of our conditions
-        #conditions = [
-        #    (new_data['TOC'] <= 2.5),
-        #    (new_data['TOC'] > 2.5) & (new_data['TOC'] <= 10),
-        #    (new_data['TOC'] > 10)
-        #]
-
-        # create a list of the values we want to assign for each condition
-        #values = ['Low', 'Moderate', 'High']
-
-        # create a new column and use np.select to assign values to it using our lists as arguments
-        #new_data['Productivity'] = np.select(conditions, values)
-
         new_data = new_data.drop(columns=['Sample'])
         new_data = new_data.replace([np.inf, -np.inf], np.nan).dropna(axis=0)
         new_data = new_data.dropna()
 
         X_new_data = new_data[elements] # Make prediction based on selected elements
-        #X_new_data = new_data.drop(columns=['Productivity'])
-        #y = new_data['Productivity']
 
         # RF
         RF = OneVsRestClassifier(
@@ -234,8 +213,8 @@ with tab3:
 
 
 with tab4:
-    Map_Data_df = {'lat': [50.6, 50.59, 50.58, 51.07, 51.32, 71.71],
-                   'lon': [-121.35, -121.34, -121.34, -121.58, -121.63, -42.60]}
+    Map_Data_df = {'lat': [50.6, 50.59, 50.58, 51.07, 51.32, 61.13],
+                   'lon': [-121.35, -121.34, -121.34, -121.58, -121.63, -45.34]}
     Map_Data_df = pd.DataFrame(data= Map_Data_df)
     st.markdown('''This tab displays the current geographic distribution of lakes represented in the model. This model was originally developed using Mars-analog hypersaline lakes in British Columbia; however, the authors encourage more data from other hypersaline systems to represent a greater diversity of regions and improve the model. Please see the contact on the 'Information' tab if you are interested in contributing data to the model. ''')
     st.map(Map_Data_df, latitude = "lat", longitude = "lon", color = '#0000FF', size = 1000)
