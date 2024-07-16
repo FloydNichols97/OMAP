@@ -32,9 +32,49 @@ with tab1:
     st.subheader('Synopsis')
     st.markdown('''This page allows on-demand prediction of estimated organic matter abundance from elemental abundance data. It is intended as a tool to provide quick estimates of organic matter abundance which requires more time and resources than acquiring elemental abundance data. This tool will be especially relevant for sample selection on Mars. Currently, estimates are calculated from a series of Mars analog hypersaline lakes according to an algorithm employed by Nichols et al. (2024?). This papers is the primary references for the OMAP and provides description of the methods.''')
     st.subheader('Instructions')
-    st.markdown('''[Insert Instructions]''')
+    st.markdown('''To improve accessibility of the model and provide rapid prediction of OC abundance from 
+XRF-derived elemental abundances, we have developed an open-source graphical user interface: 
+Organic Matter Abundance Predictor (OMAP; Nichols, 2024). This application is an interactive 
+data visualization tool and predictor for the constructed model. Due to the random forest algorithm 
+having the best performance for our testing and validation, we use it as the primary algorithm for 
+the application. The application consists of three main components including model data and 
+performance visualization, organic carbon probability predictor, and geographic distribution of 
+samples that the model is based on. Additionally, this application serves as an open-source 
+database for others to add OC and XRF-derived elemental abundances from other sedimentary 
+systems to improve and expand upon the model.
+Model Set Up and View Model Data and Performance
+This section was designed to provide transparency and give the user the ability to view the 
+data used to run the model in addition to tuning it to their own needs. Considering that not all XRF 
+instruments can analyze the same elements as presented in this paper, we allow the user to select 
+the elements of interest(s) in Select Elements. The default elements selected are all available 
+elements that the model is capable of running; however, if the user can only analyze fewer 
+elements, then they can clear the default elements using the right ‘x’ button and manually select 
+the elements of interest. 
+Once the desired elements are selected, the user may define the boundary conditions for 
+organic matter abundance classification. The default boundary conditions are 2.5 for low and 10.0 
+for high as described in the main text of this paper. Once the boundary conditions are set, the 
+application will automatically produce two interactive figures for dimensionality reduction of the 
+data and model metrics including accuracy, recall, precision, and F1 score.
+Additionally, this model was designed to look at patterns between elemental abundances 
+and ratios, as such the model is capable of making predictions for variety of instrumentation that 
+can resolve elemental abundance concentrations and ratios such as Gamma-ray spectroscopy as 
+described in the main text of this paper. Similarly, the original model takes into account different 
+resolutions of sedimentary sampling and as such can be compared at 0.5 cm scale to broader scales 
+of 3 cm resolutions.
+Load and Analyze
+Once the model is set for the desired elements and boundary conditions as described above, 
+the user can now make a prediction of their own elemental abundance dataset. To do so, click the 
+‘Browse files’ button and select a ‘.csv’ file of the elemental abundance data. It is important that 
+the csv file is set up properly for the model to make a prediction. Example set up below. 
+Additionally, if the following error is received: ‘KeyError: This app has encountered an error. The 
+original error message is redacted to prevent data leaks. Full error details have been recorded in 
+the logs (if you're on Streamlit Cloud, click on 'Manage app' in the lower right of your app)’ after 
+uploading the file then the elements selected on the model set up page do not match the csv file. 
+To solve the error, return to the model set up page and make sure that only the elements present in 
+your csv file are selected.
+''')
     st.subheader('Contact')
-    st.write('floydnichols2025@u.northwestern.edu')
+    st.write('floydnichols@vt.edu')
 
 with tab2:
     @st.cache_data
